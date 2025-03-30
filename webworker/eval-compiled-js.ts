@@ -19,10 +19,13 @@ export function evalCompiledJs(
       preSuppliedImports[name] || preSuppliedImports[resolvedFilePath!]
     return new Proxy(mod, {
       get(target, prop) {
+        if (prop === "__esModule") {
+          return true
+        }
+        if (prop === "default") {
+          return target.default || target
+        }
         if (!(prop in target)) {
-          if (prop === "default") {
-            return undefined
-          }
           throw new Error(
             `Component "${String(prop)}" is not exported by "${name}"`,
           )
