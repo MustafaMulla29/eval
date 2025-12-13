@@ -27,7 +27,8 @@ export default () => {
   return (
     <board width="10mm" height="10mm">
       <resistor resistance="1k" footprint="0402" name="R1" cadModel={{
-        glbUrl
+        glbUrl,
+        stepUrl
       }} />
     </board>
   );
@@ -50,6 +51,11 @@ export default () => {
 
   expect(cadComponent.model_glb_url).toBe(
     "https://example.com/assets/model.glb",
+  )
+
+  // Verify model_step_url is also properly transformed
+  expect(cadComponent.model_step_url).toBe(
+    "https://example.com/assets/model.step",
   )
 
   await worker.kill()

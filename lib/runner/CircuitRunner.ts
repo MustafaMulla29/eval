@@ -11,6 +11,7 @@ import type { RootCircuit } from "@tscircuit/core"
 import * as React from "react"
 import { setupDefaultEntrypointIfNeeded } from "./setupDefaultEntrypointIfNeeded"
 import { enhanceRootCircuitHasNoChildrenError } from "lib/utils/enhance-root-circuit-error"
+import { transformModelUrls } from "lib/utils/transform-model-urls"
 import Debug from "debug"
 import { setValueAtPath } from "lib/shared/obj-path"
 
@@ -159,7 +160,10 @@ export class CircuitRunner implements CircuitRunnerApi {
       throw new Error("No circuit has been created")
     }
     try {
-      return this._executionContext.circuit.getCircuitJson()
+      const circuitJson = this._executionContext.circuit.getCircuitJson()
+      const projectBaseUrl =
+        this._executionContext.circuit.platform?.projectBaseUrl
+      return transformModelUrls(circuitJson, projectBaseUrl)
     } catch (error) {
       throw enhanceRootCircuitHasNoChildrenError(
         error,

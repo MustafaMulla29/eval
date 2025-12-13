@@ -13,6 +13,7 @@ import { getTsConfig } from "lib/runner/tsconfigPaths"
 import type { RootCircuit } from "@tscircuit/core"
 import { setupDefaultEntrypointIfNeeded } from "lib/runner/setupDefaultEntrypointIfNeeded"
 import { enhanceRootCircuitHasNoChildrenError } from "lib/utils/enhance-root-circuit-error"
+import { transformModelUrls } from "lib/utils/transform-model-urls"
 import { setupFetchProxy } from "./fetchProxy"
 import { setValueAtPath } from "lib/shared/obj-path"
 
@@ -233,7 +234,9 @@ const webWorkerApi = {
       throw new Error("No circuit has been created")
     }
     try {
-      return executionContext.circuit.getCircuitJson()
+      const circuitJson = executionContext.circuit.getCircuitJson()
+      const projectBaseUrl = executionContext.circuit.platform?.projectBaseUrl
+      return transformModelUrls(circuitJson, projectBaseUrl)
     } catch (error) {
       throw enhanceRootCircuitHasNoChildrenError(
         error,
